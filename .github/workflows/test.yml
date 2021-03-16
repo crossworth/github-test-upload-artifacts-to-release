@@ -13,12 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Update Github Release
-        uses: Roang-zero1/github-upload-release-artifacts-action@master
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          args: "*.txt"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: "*.txt"
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
 
       - name: Save file to Artifacts
         uses: actions/upload-artifact@v2

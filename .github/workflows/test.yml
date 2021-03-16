@@ -13,11 +13,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
+      - name: pubspec release
+        run: |
+          sed -i 's/version: 1.0.0+1/version: '${{ steps.get_version.outputs.VERSION }}'/g' pubspec.yaml|
+          echo "Tagged pubspec.yaml"
+
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: "*.txt"
+          file: "*.yaml"
           tag: ${{ github.ref }}
           overwrite: true
           file_glob: true
@@ -26,4 +36,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: TestFile
-          path: file.txt
+          path: pubspec.yaml
